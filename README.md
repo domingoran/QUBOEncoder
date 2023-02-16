@@ -22,7 +22,10 @@ This system has an infinite set of solutions.\
 Imposing these constraints on the solution:
 
 $$
-\min\sum_{i=1}^4(x_i^2)\\
+\min\sum_{i=1}^4(x_i^2)
+$$
+
+$$
 0 \leq x_i \leq 1
 $$
 
