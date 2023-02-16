@@ -10,6 +10,19 @@ output: html_document
 QUBO matrix is a useful format to submit problems on D-Wave quantum computer.\
 This modulo encode a specific problem into the QUBO format.\
 If we have a system of equations with more variables than equations:
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r equation}
+eq <-  noquote(paste(expression("2x+5y-2z+2p=9\\\\3x-2y+1z-3p=34\\\\-3x+3y+2z+4p=33\\\\2x+3y+4z+5p=125")))
+```
+
+$$
+\begin{cases} `r eq` \end{cases}
+$$
+
 $$
 \begin{cases} 
 -4x_1+2x_2+5x_3-2x_4=9\\\\
