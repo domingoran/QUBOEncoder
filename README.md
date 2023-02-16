@@ -26,9 +26,11 @@ $$
 
 it becames an optimization problem with a unique solution.\
 The final matrix in general is:
+
 $$
 Q=Q_{const}+ \sum_i\lambda_i Q_{(obj)i}
 $$
+
 where:
 * $Q_{const}$ is the matrix that encode the first constraint
 * $\lambda_i$ are Lagrangian multipliers that must be tuned
