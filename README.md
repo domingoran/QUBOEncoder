@@ -2,7 +2,6 @@
 title: "QUBO Matrix encoder"
 author: "Domingo Ranieri"
 date: "15 February 2023"
-output: html_document
 ---
 
 ## QUBO Matrix encoder
