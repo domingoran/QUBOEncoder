@@ -45,7 +45,7 @@ The following code can be used to encode the problem assuming that $\lambda_1=0.
 
 ```python
 import QuboEncoder as qe
-Q=qe.Qmatrix(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]],  Values=[9,4],Lambda=[0.5,0.3]).CalculateMatrix()
+Q=qe.Qmatrix(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3]).CalculateMatrix()
 ```
 If $\lambda_i=\lambda=0.5 \forall i$, the code is modified setting Lambda=[0.5].\
 The default value is Lambda=[1]
@@ -64,5 +64,5 @@ From the previous example, to encode each variable using 4 qubits and set the sc
 
 ```python
 import QuboEncoder as qe
-Q=qe.Qmatrix(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]],  Values=[9,4],Lambda=[0.5,0.3],NumberQubits=4, scaleFactors=[2,1,4,10]).CalculateMatrix()
+Q=qe.Qmatrix(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3], NumberQubits=4, ScaleFactors=[2,1,4,10]).CalculateMatrix()
 ```
