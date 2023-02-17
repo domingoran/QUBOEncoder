@@ -5,7 +5,7 @@ class Qmatrix:
     def __init__(
         self,
         NumberQubits=3,
-        scaleFactors=[1],
+        ScaleFactors=[1],
         Lambda=[1],
         Values=[],
         EqCoeffs=[[]],
@@ -22,10 +22,10 @@ class Qmatrix:
         else:
             self.Lambda = Lambda
         self.coef = coef
-        if len(scaleFactors) != len(EqCoeffs[0]):
-            self.scaleFactors = scaleFactors * len(EqCoeffs)
+        if len(ScaleFactors) != len(EqCoeffs[0]):
+            self.ScaleFactors = ScaleFactors * len(EqCoeffs)
         else:
-            self.scaleFactors = scaleFactors
+            self.ScaleFactors = ScaleFactors
 
     def LinearCoef(self, i, l):
 
@@ -38,7 +38,7 @@ class Qmatrix:
 
         for i in range(self.NumberVariables):
             for j in range(self.NumberQubits):
-                self.coef.append(1 / (2 ** (j + 1) * self.scaleFactors[i]))
+                self.coef.append(1 / (2 ** (j + 1) * self.ScaleFactors[i]))
 
     def Qobj(self):
         Qobj = np.zeros(
