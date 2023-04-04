@@ -75,7 +75,7 @@ When the quantum computation is finished, the bitstring solution can be stored a
 If `results` contains the output of the quantum annealing, the bitstring solution can be extracted and stored in this way:
 
 
-The method <span style="color:red">`DecodeSolution`</span>. can be used to pass from the bitstring solution to the $x_i$ values $\in$ [0,1]. The result is stored in the class attribute `Solution`.
+The method `DecodeSolution`. can be used to pass from the bitstring solution to the $x_i$ values $\in$ [0,1]. The result is stored in the class attribute `Solution`.
 
 It is possible to calculate the value of the first imposed constraint using the method `CalulateSquareSumConstr` and the result is saved in the class attribute `SquareSumConst`.
 
