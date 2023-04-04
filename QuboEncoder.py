@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Qmatrix:
+class QEncoder:
     def __init__(
         self,
         Values=[],
