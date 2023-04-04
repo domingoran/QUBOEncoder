@@ -141,7 +141,6 @@ class QEncoder:
                 self.Solution.append(s)
 
     def CalulateSquareSumConstr(self):
-        c = 0
         if len(self.Solution) == 0:
             self.DecodeSolution()
         self.SquareSumConst = sum(map(lambda x: x * x, self.Solution))
