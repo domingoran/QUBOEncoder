@@ -1,7 +1,8 @@
 ---
 title: "QUBO Matrix encoder"
 author: "Domingo Ranieri"
-date: "15 February 2023"
+V0 date: "15 February 2023"
+V1 date: "04 April 2023"
 ---
 
 ## QUBO Matrix encoder
@@ -74,9 +75,14 @@ When the quantum computation is finished, the bitstring solution can be stored a
 
 If `results` contains the output of the quantum annealing, the bitstring solution can be extracted and stored in this way:
 
+```python
+dict_sol = results.first.sample
+keys, values = zip(*dict_sol.items())
+Q.BitstringSolution=values
+```
 
 The method `DecodeSolution`. can be used to pass from the bitstring solution to the $x_i$ values $\in$ [0,1]. The result is stored in the class attribute `Solution`.
 
 It is possible to calculate the value of the first imposed constraint using the method `CalulateSquareSumConstr` and the result is saved in the class attribute `SquareSumConst`.
 
-The method `CalulateEquationValues` calculate the square between the $L.H.S$ and the $R.H.S.$ for each equation in the system. This value should be 0 for the correct solution of the system. The values are stored in a list attribute `EqValues`.
+The method `CalulateEquationValues` calculate the square between the $L.H.S$ and the $R.H.S.$ for each equation in the system. This value should be 0 for the correct solution of the system. The values are stored in the class attribute list `EqValues`.
