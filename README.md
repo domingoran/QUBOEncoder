@@ -6,7 +6,7 @@ V1 date: "04 April 2023"
 ---
 
 # QUBO Matrix encoder
----
+
 QUBO matrix is a useful format to submit problems on a D-Wave quantum computer.
 This modulo encodes a specific problem into the QUBO format.
 If we have a system of equations with more variables than equations:
@@ -70,7 +70,7 @@ Q=qe.QEncoder(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3],
 QMatrix=.CalculateMatrix()
 ```
 ## Postprocessing results
----
+
 
 When the quantum computation is finished, the bitstring solution can be stored and processed with some methods.
 
