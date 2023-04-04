@@ -45,7 +45,8 @@ The following code can be used to encode the problem assuming that $\lambda_1=0.
 
 ```python
 import QuboEncoder as qe
-Q=qe.Qmatrix(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3]).CalculateMatrix()
+Q=qe.QEncoder(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3])
+QMatrix=Q.CalculateMatrix()
 ```
 If $\lambda_i=\lambda=0.5 \forall i$, the code is modified setting Lambda=[0.5].\
 The default value is Lambda=[1]
@@ -64,5 +65,18 @@ From the previous example, to encode each variable using 4 qubits and set the sc
 
 ```python
 import QuboEncoder as qe
-Q=qe.Qmatrix(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3], NumberQubits=4, ScaleFactors=[2,1,4,10]).CalculateMatrix()
+Q=qe.QEncoder(EqCoeffs=[[-4,2,5,-2],[7,3,-2,1]], Values=[9,4], Lambda=[0.5,0.3], NumberQubits=4, ScaleFactors=[2,1,4,10])
+QMatrix=.CalculateMatrix()
 ```
+#Postprocessing results
+
+When the quantum computation is finished, the bitstring solution can be stored and processed with some methods.
+
+If `results` contains the output of the quantum annealing, the bitstring solution can be extracted and stored in this way:
+
+
+The method <span style="color:red">`DecodeSolution`</span>. can be used to pass from the bitstring solution to the $x_i$ values $\in$ [0,1]. The result is stored in the class attribute `Solution`.
+
+It is possible to calculate the value of the first imposed constraint using the method `CalulateSquareSumConstr` and the result is saved in the class attribute `SquareSumConst`.
+
+The method `CalulateEquationValues` calculate the square between the $L.H.S$ and the $R.H.S.$ for each equation in the system. This value should be 0 for the correct solution of the system. The values are stored in a list attribute `EqValues`.
