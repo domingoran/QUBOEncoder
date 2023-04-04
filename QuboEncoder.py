@@ -4,24 +4,29 @@ import numpy as np
 class Qmatrix:
     def __init__(
         self,
-        NumberQubits=3,
-        ScaleFactors=[1],
-        Lambda=[1],
         Values=[],
+        NumberQubits=3,
         EqCoeffs=[[]],
-        coef=[],
-       
+        Lambda=[1],
+        Coef=[],
+        ScaleFactors=[1],
+        BitstringSolution=(),
     ):
-        
+        self.NumberVariables = len(EqCoeffs[0])
         self.NumberQubits = NumberQubits
         self.Values = Values
         self.EqCoeffs = EqCoeffs
-        self.NumberVariables = len(EqCoeffs[0])
+        self.BitstringSolution = BitstringSolution
+        self.Solution = []
+        self.EqValues = []
+        self.SquareSumConst = 0
+        self.Coef = Coef
+
         if len(Lambda) != len(EqCoeffs):
             self.Lambda = Lambda * len(EqCoeffs)
         else:
             self.Lambda = Lambda
-        self.coef = coef
+
         if len(ScaleFactors) != len(EqCoeffs[0]):
             self.ScaleFactors = ScaleFactors * len(EqCoeffs)
         else:
@@ -29,16 +34,15 @@ class Qmatrix:
 
     def LinearCoef(self, i, l):
 
-        return (self.EqCoeffs[l][i // self.NumberQubits] * self.coef[i]) * (
-            (self.EqCoeffs[l][i // self.NumberQubits] * self.coef[i])
+        return (self.EqCoeffs[l][i // self.NumberQubits] * self.Coef[i]) * (
+            (self.EqCoeffs[l][i // self.NumberQubits] * self.Coef[i])
             - 2 * self.Values[l]
         )
 
-    def Coef(self):
-
+    def CalculateCoef(self):
         for i in range(self.NumberVariables):
             for j in range(self.NumberQubits):
-                self.coef.append(1 / (2 ** (j + 1) * self.ScaleFactors[i]))
+                self.Coef.append(1 / (2 ** (j + 1) * self.ScaleFactors[i]))
 
     def Qobj(self):
         Qobj = np.zeros(
@@ -60,8 +64,8 @@ class Qmatrix:
             for i in range(self.NumberVariables * self.NumberQubits):
                 for j in range(self.NumberVariables * self.NumberQubits):
                     Mat[i, j] = (
-                        self.coef[i]
-                        * self.coef[j]
+                        self.Coef[i]
+                        * self.Coef[j]
                         * self.EqCoeffs[l][i // self.NumberQubits]
                         * self.EqCoeffs[l][j // self.NumberQubits]
                     )
@@ -102,8 +106,8 @@ class Qmatrix:
                 for j in range(self.NumberQubits):
                     subcell = subcells[k]
                     subcell[i, j] = (
-                        self.coef[i + k * self.NumberQubits]
-                        * self.coef[j + k * self.NumberQubits]
+                        self.Coef[i + k * self.NumberQubits]
+                        * self.Coef[j + k * self.NumberQubits]
                     )
 
         for i in range(self.NumberVariables):
@@ -121,8 +125,32 @@ class Qmatrix:
         return Mat
 
     def CalculateMatrix(self):
-        if len(self.coef) == 0:
-            self.Coef()
+        if len(self.Coef) == 0:
+            self.CalculateCoef()
         Mat = self.Qconst() + self.Qobj()
         return Mat
 
+    def DecodeSolution(self):
+        if len(self.Solution) == 0:
+            for i in range(len(self.EqCoeffs[0])):
+                s = 0
+                for j in range(self.NumberQubits):
+                    s += (self.BitstringSolution)[
+                        j + i * self.NumberQubits
+                    ] * self.Coef[j + i * self.NumberQubits]
+                self.Solution.append(s)
+
+    def CalulateSquareSumConstr(self):
+        c = 0
+        if len(self.Solution) == 0:
+            self.DecodeSolution()
+        self.SquareSumConst = sum(map(lambda x: x * x, self.Solution))
+
+    def CalulateEquationValues(self):
+        if len(self.Solution) == 0:
+            self.DecodeSolution()
+        for i in range(len(self.EqCoeffs)):
+            e = 0
+            for j in range(len(self.EqCoeffs[i])):
+                e += self.EqCoeffs[i][j] * self.Solution[j]
+            self.EqValues.append(round((e - self.Values[i]) ** 2, 5))
