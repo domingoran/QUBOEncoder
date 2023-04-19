@@ -140,12 +140,12 @@ class QEncoder:
                     ] * self.Coef[j + i * self.NumberQubits]
                 self.Solution.append(s)
 
-    def CalulateSquareSumConstr(self):
+    def CalculateSquareSumConstr(self):
         if len(self.Solution) == 0:
             self.DecodeSolution()
         self.SquareSumConst = sum(map(lambda x: x * x, self.Solution))
 
-    def CalulateEquationValues(self):
+    def CalculateEquationValues(self):
         if len(self.Solution) == 0:
             self.DecodeSolution()
         for i in range(len(self.EqCoeffs)):
