@@ -69,6 +69,7 @@ for i in range(0, 132, 200):
     with open("Embedding.txt", "a") as f:
         f.write(f"----------Run: {datetime.datetime.now()}---n_q = {n_q}")
         f.write(emb)
+        f.write(f"Number of physical qubits = {sum(len(chain) for chain in emb.values())} \n")
         f.write("\n")
     results = sampler.sample_qubo(
         Q, num_reads=num_reads, chain_strength=10 * Mat.max(), annealing_time=t_an
