@@ -7,68 +7,53 @@ import pandas as pd
 import numpy as np
 import datetime
 import dimod
+import json
+
+
+solutions={}
+
 
 n_q = 4
 t_an = 20
 num_reads = 4000
-with open("Results.txt", "a") as f:
+L=10
+with open("Result10.txt", "a") as f:
     f.write(
-        f"----------Run: {datetime.datetime.now()}---n_q = {n_q}---t_an = {t_an}---n_reads = {num_reads}"
+        f"----------Run: {datetime.datetime.now()}---n_q = {n_q}---t_an = {t_an}---n_reads = {num_reads}---L={L}"
     )
-    f.write("\n")
-
-
-arrT = []
-
-# Find values of Opt Forces and save in a list
-df = pd.read_excel(r"Dati.xlsx", sheet_name="OptimalForce")
-OptForce = list(df.OptForce)
-
-PageNames = [
-    "MomentArm_hip_flexion_l",
-    "MomentArm_hip_adduction_l",
-    "MomentArm_hip_rotation_l",
-    "MomentArm_knee_angle_l",
-    "MomentArm_ankle_angle_l",
-]
+    
+OptForce = [1313.18360656, 557.1147541 ,2191.74098361,5148.76721311,2747.82295082]
 
 # import Data of Momenta, Activations and  ArmsMatrix at time instant i
-for i in range(0, 132, 200):
+for i in range(0,150,190):
     ArmsMatrix = []
-    time = 5.133311 + i * (6.216601 - 5.133311) / 130
-    arrT.append(time)
-    df = pd.read_excel(r"Dati.xlsx", sheet_name="Momenta")
-    Momenta = list(df.iloc[i, 7:12])
-    df = pd.read_excel(r"Dati.xlsx", sheet_name="Activations")
-    Activations = list(df.iloc[i, 1:11])
-    for sheet_name in PageNames:
-        df = pd.read_excel(
-            r"Dati.xlsx",
-            sheet_name=sheet_name,
-        )
-        Arms = list(df.iloc[i, 1:11])
-        ArmsForce = [Arms[i] * OptForce[i] for i in range(len(OptForce))]
-        ArmsMatrix.append(ArmsForce)
+    df = pd.read_csv(r"SystemSO_KE.csv")
+    Momenta = list(df.iloc[i, 5:6])
+    Arms=list(df.iloc[i, :5])
+    Activations = list(df.iloc[i, 6:-1])
+    ArmsForce = [Arms[i] * OptForce[i] for i in range(len(OptForce))]
+    ArmsMatrix.append(ArmsForce)
 
     Obj = qe.QEncoder(
         NumberQubits=n_q,
         EqCoeffs=ArmsMatrix,
-        Values=Momenta,
-        Lambda=[abs(1 / (Momentum)) for Momentum in Momenta],
-        ScaleFactors=[2, 1.5, 2, 3, 2, 4, 3, 2, 2, 4],
+        Values=[Momenta[i] -150 for i in range(len(Momenta))],
+        # Lambda=[10*abs(1 / (Momenta[0]))],
+        Lambda=[L],
+        ScaleFactors=[1,1,1,1,1], #[40,40,1.5,1,1.5],
     )
     Mat = Obj.CalculateMatrix()
-
     solver = DWaveSampler(solver={"topology__type": "pegasus"})
+    
 
     bqm = dimod.BinaryQuadraticModel.from_qubo(Mat)
     Q = (bqm.to_qubo())[0]
     __, target_edgelist, target_adjacency = solver.structure
     emb = find_embedding(Q, target_edgelist, verbose=1)
     sampler = FixedEmbeddingComposite(solver, emb)
-    with open("Embedding.txt", "a") as f:
-        f.write(f"----------Run: {datetime.datetime.now()}---n_q = {n_q}")
-        f.write(emb)
+    with open("Embedding10.txt", "a") as f:
+        f.write(f"----------Run: {datetime.datetime.now()}---n_q = {n_q} \n")
+        f.write(str(emb))
         f.write(f"Number of physical qubits = {sum(len(chain) for chain in emb.values())} \n")
         f.write("\n")
     results = sampler.sample_qubo(
@@ -78,18 +63,27 @@ for i in range(0, 132, 200):
     keys, values = zip(*dict_sol.items())
     calculationTime=results.info["timing"]
 
-    with open("Temp.txt", "a") as f:
-        np.savetxt(f, results)
+    df1=pd.DataFrame(list(map(np.ravel, results.record["sample"][0:100])))
+
+    df2 = pd.DataFrame({'Energy': results.record["energy"][0:100], 'num_occurences': results.record["num_occurrences"][0:100]})
+    df=pd.concat([df1, df2], axis="columns")
+    df.to_csv('allResults/L10/'+str(datetime.datetime.now())+"-"+str(n_q)+"-"+str(t_an)+"-"+str(L)+"-"+str(i)+'.csv')
 
     Obj.BitstringSolution = values
     Obj.CalculateEquationValues()
     Obj.CalculateSquareSumConstr()
 
-    with open("Results.txt", "a") as f:
+    solutions[i/10]=Obj.Solution
+
+    with open("Result10.txt", "a") as f:
+        f.write("\n")
+        f.write(f"Time = {i} \n")
         f.write(f"EqValues = {Obj.EqValues} \n")
         f.write(f"Solution = {Obj.Solution} \n")
         f.write(f"Activations = {Activations} \n")
         f.write(f"SquareSumConst = {Obj.SquareSumConst} \n")
         f.write(f"CalculationTime= {calculationTime} \n")
 
+with open('solutions.json', 'w') as f:
+    json.dump(solutions, f)
 
