@@ -22,7 +22,7 @@ class QEncoder:
         self.SquareSumConst = 0
         self.Coef = Coef
 
-        if len(Lambda) != len(EqCoeffs):
+        if len(Lambda) == 1:
             self.Lambda = Lambda * len(EqCoeffs)
         else:
             self.Lambda = Lambda
@@ -153,3 +153,4 @@ class QEncoder:
             for j in range(len(self.EqCoeffs[i])):
                 e += self.EqCoeffs[i][j] * self.Solution[j]
             self.EqValues.append(round((e - self.Values[i]) ** 2, 5))
+
