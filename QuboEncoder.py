@@ -40,6 +40,8 @@ class QEncoder:
         )
 
     def CalculateCoef(self):
+        if len(self.Coef)!=0:
+            self.Coef=[]
         for i in range(self.NumberVariables):
             for j in range(self.NumberQubits):
                 self.Coef.append(1 / (2 ** (j + 1) * self.ScaleFactors[i]))
@@ -125,8 +127,7 @@ class QEncoder:
         return Mat
 
     def CalculateMatrix(self):
-        if len(self.Coef) == 0:
-            self.CalculateCoef()
+        self.CalculateCoef()
         Mat = self.Qconst() + self.Qobj()
         return Mat
 
@@ -153,4 +154,3 @@ class QEncoder:
             for j in range(len(self.EqCoeffs[i])):
                 e += self.EqCoeffs[i][j] * self.Solution[j]
             self.EqValues.append(round((e - self.Values[i]) ** 2, 5))
-
